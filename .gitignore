@@ -1,0 +1,15 @@
+*-openrc.sh
+openrc.sh
+*.tfstate
+*.backup
+.terraform*
+terraform.tfvars
+# No SSH keys
+id_rsa
+id_rsa.pub
+# Any potential machine images
+*.img
+# This should be generated on the client from the yml template
+coreos_bootstrap.json
+# This is the binary for generating ignition config files from yml
+ct
