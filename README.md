@@ -31,49 +31,64 @@ For more information about the configuration of the terraform openstack provider
 
 ## Build
 The examples here will assume a linux / unix environment, but the steps should work on every platform.
-1. Download and install terraform from https://www.terraform.io/download.html
-2. Clone this repository and move to it
-```bash
-git clone https://git.ai.wu.ac.at/specialprivacy/infrastructure.git
-```
-3. Initialize terraform (downloads providers)
-```bash
-terraform init
-```
-4. Download the ct tool
-```bash
-wget https://github.com/coreos/container-linux-config-transpiler/releases/download/v0.7.0/ct-v0.7.0-aarch64-unknown-linux-gnu
-mv ct-v0.7.0-aarch64-unknown-linux-gnu ct
-chmod +x ct
-```
-5. Generate a new keypair in the workdirectory. Do not lose this private key as it is necessary to SSH into the bastion server.
-```bash
-ssh-keygen -t rsa -b 4096 -c "SPECIAL access key"
-```
-6. Download and unzip the coreos stable image. Because the openstack API cannot unzip it, we have to download it locally, rather than passing in a URL and have the Openstack installation fetch it automatically
-```bash
-wget https://stable.release.core-os.net/amd64-usr/current/coreos_production_openstack_image.img.bz2
-bunzip2 coreos_production_openstack_image.img.bz2
-```
-7. Generate the coreos ignition configuration
-```bash
-cat coreos_bootstrap.yml | sed "s^SSH_TOKEN^$(cat id_rsa.pub)^g" | sed "s^DISCOVERY^$(curl -XGET 'https://discovery.etc.io/new?size=3)'^g" | ./ct -out-file coreos_bootstrap.json -platform openstack-metadata
-```
-8. Run terraform with the appropriate configuration
-```bash
-TF_user_name=<openstack_username> \
-TF_password=<openstack_password> \
-TF_auth_url=https://public.tlabs.cloud:5000/v3 \
-TF_tenant_name=<openstack_project_name> \
-TF_swarm_public_key=id_rsa.pub \
-TF_swarm_private_key_file=id_rsa
-terraform apply
-```
-9. Read the public IP from the terraform output and connect through SSH
-```bash
-terraform output
-ssh -i id_rsa core@$(terraform output | awk '{print $3}')
-```
+1.   Download and install terraform from https://www.terraform.io/download.html
+2.   Clone this repository and move to it
+
+     ```bash
+     git clone https://git.ai.wu.ac.at/specialprivacy/infrastructure.git
+     ```
+
+3.   Initialize terraform (downloads providers)
+
+     ```bash
+     terraform init
+     ```
+
+4.   Download the ct tool
+
+     ```bash
+     wget https://github.com/coreos/container-linux-config-transpiler/releases/download/v0.7.0/ct-v0.7.0-aarch64-unknown-linux-gnu
+     mv ct-v0.7.0-aarch64-unknown-linux-gnu ct
+     chmod +x ct
+     ```
+
+5.   Generate a new keypair in the workdirectory. Do not lose this private key as it is necessary to SSH into the bastion server.
+
+     ```bash
+     ssh-keygen -t rsa -b 4096 -c "SPECIAL access key"
+     ```
+
+6.   Download and unzip the coreos stable image. Because the openstack API cannot unzip it, we have to download it locally, rather than passing in a URL and have the Openstack installation fetch it automatically
+
+     ```bash
+     wget https://stable.release.core-os.net/amd64-usr/current/coreos_production_openstack_image.img.bz2
+     bunzip2 coreos_production_openstack_image.img.bz2
+     ```
+
+7.   Generate the coreos ignition configuration
+
+     ```bash
+     cat coreos_bootstrap.yml | sed "s^SSH_TOKEN^$(cat id_rsa.pub)^g" | sed "s^DISCOVERY^$(curl -XGET 'https://discovery.etc.io/new?size=3)'^g" | ./ct -out-file coreos_bootstrap.json -platform openstack-metadata
+     ```
+
+8.   Run terraform with the appropriate configuration
+
+     ```bash
+     TF_VAR_user_name=<openstack_username> \
+     TF_VAR_password=<openstack_password> \
+     TF_VAR_auth_url=https://public.tlabs.cloud:5000/v3 \
+     TF_VAR_tenant_name=<openstack_project_name> \
+     TF_VAR_swarm_public_key=id_rsa.pub \
+     TF_VAR_swarm_private_key_file=id_rsa
+     terraform apply
+     ```
+
+9.   Read the public IP from the terraform output and connect through SSH
+
+     ```bash
+     terraform output
+     ssh -i id_rsa core@$(terraform output | awk '{print $3}')
+     ```
 
 ## TODO
 * Close port 2375 on the swarm security group by creating and inserting certificates when the VMs are created.
