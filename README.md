@@ -6,7 +6,7 @@ The scripts will create a cluster of 3 VMS running docker swarm.
 * 1 root VM which will also act as a bastion server. This is the node from which we'll bootstrap the swarm cluster.
 * 2 master VMs. These are only exposed to the internal network.
 
-All machines run coreos and will install their own operating system updates. Additional machines can be added by changing the `manager_nodes_count` and `worker_nodes_count` variables.
+All machines run coreos and will install their own operating system updates. Additional machines can be added by changing the `manager_node_count` and `worker_node_count` variables.
 A swarm cluster should probably never have more than 5 manager nodes, so initially try added worker nodes.
 
 The script will also install docker swarm mode onto the machines and join them into the existing cluster. The cluster will be mostly fault tolerant, however terraform will get confused if the root machine dies.

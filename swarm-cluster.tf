@@ -147,4 +147,3 @@ resource "openstack_compute_floatingip_associate_v2" "cluster_ip_assoc" {
     }
   }
 }
-
