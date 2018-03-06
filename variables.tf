@@ -20,16 +20,24 @@ variable "domain_name" {
 }
 
 # Stack variables
+variable "manager_nodes_count" {
+  default = 2
+}
+
+variable "worker_nodes_count" {
+  default = 0
+}
+
 variable "instance_flavor" {
   default = "m1.large"
 }
 
 variable "swarm_public_key_file" {
-  default = "~/.ssh/id_rsa.special.pub"
+  default = "id_rsa.pub"
 }
 
 variable "swarm_private_key_file" {
-  default = "~/.ssh/id_rsa.special"
+  default = "id_rsa"
 }
 
 variable "project_name" {
