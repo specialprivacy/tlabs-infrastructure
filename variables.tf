@@ -20,11 +20,11 @@ variable "domain_name" {
 }
 
 # Stack variables
-variable "manager_nodes_count" {
+variable "manager_node_count" {
   default = 2
 }
 
-variable "worker_nodes_count" {
+variable "worker_node_count" {
   default = 0
 }
 

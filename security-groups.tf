@@ -1,4 +1,3 @@
-
 resource "openstack_networking_secgroup_v2" "allow_all_temp" {
   name        = "allow_all_temp"
   description = "Openstack seems to have issues provisioning vms with our current security group setup. This group allows all traffic and is supposed to be used during VM creation. The security groups can then later be swapped out for the proper ones."
@@ -160,4 +159,29 @@ resource "openstack_networking_secgroup_rule_v2" "docker_tcp_2375" {
   port_range_max    = 2376
   remote_group_id   = "${openstack_networking_secgroup_v2.docker_tcp.id}"
   security_group_id = "${openstack_networking_secgroup_v2.docker_tcp.id}"
+}
+
+resource "openstack_networking_secgroup_v2" "public_http_server" {
+  name        = "public-http-server"
+  description = "Security group which opens up port 80 and 443 to the internet, so http traffic can be server"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "public_http_server_80" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 80
+  port_range_max    = 80
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.public_http_server.id}"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "public_http_server_443" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 443
+  port_range_max    = 443
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.public_http_server.id}"
 }

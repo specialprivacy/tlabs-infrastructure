@@ -2,15 +2,18 @@
 This repository contains the code which will provision the infrastructure for demo environment for the SPECIAL platform. The infrastructure is constructed using (terraform)[https://www.terraform.io].
 
 ## Description
-The scripts will create a cluster of 3 VMS running docker swarm.
+The scripts will create a cluster of 3 VMS running docker swarm and a standalone server hosting a docker registry.
 * 1 root VM which will also act as a bastion server. This is the node from which we'll bootstrap the swarm cluster.
 * 2 master VMs. These are only exposed to the internal network.
+* 1 ubuntu VM with an attached disk running a docker registry.
 
-All machines run coreos and will install their own operating system updates. Additional machines can be added by changing the `manager_node_count` and `worker_node_count` variables.
+The docker swarm machines all run machines coreos and will install their own operating system updates. Additional machines can be added by changing the `manager_node_count` and `worker_node_count` variables.
 A swarm cluster should probably never have more than 5 manager nodes, so initially try added worker nodes.
 
 The script will also install docker swarm mode onto the machines and join them into the existing cluster. The cluster will be mostly fault tolerant, however terraform will get confused if the root machine dies.
 It will try to recreate it, but the script that provisions docker swarm will fail as a cluster already exists. So after using this script for the first time, the provisioner exec line should be changed to the same script that provisions a manager.
+
+Because the docker registry is not being run in an HA mode, we do not want to have it reboot randomly (which is how coreos patches servers). Therefore we are running standard ubuntu on this server. Ideally we should move to a docker registry SaaS offering.
 
 Here is a small description of what each of the files in this repositor does:
 * **coreos_bootstrap.yml**
@@ -20,6 +23,10 @@ It needs to be preprocessed to insert an etcd discovery token and the public SSH
 This file defines all the different security groups that can be assigned to VMs. These are not specific to this infrastructure
 * **swarm-cluster.tf**
 This file contains the description of the VMs and network components. It will also provision a public IP and assign it to the root/bastion server.
+* **docker-registry.tf**
+This file contains the description of the ubuntu VM which will run the docker registry. Because we can only have one router in our account it is reusing the docker swarm network.
+* **registry-cloud-config.yml**
+This file contains the post boot configuration of the ubuntu VM. It is responsible for partioning and mounting the attached storage volume and installing all dependencies. We could even have it start the docker registry as an improvement. It serves a similar purpose as `coreos_bootstrap.yml` does for the swarm servers.
 * **variables.tf**
 This file contains configurable parameters of the stack we are deploying. Here you can change the amount of VMs to create and the image type etc. Non secret parameters of the Openstack provider can also be set in this file. Variables can also be overwritten at runtime by passing in environment variables (see https://www.terraform.io/docs/configuration/environment-variables.html)
 * **terraform.tfvars**
@@ -87,9 +94,11 @@ The examples here will assume a linux / unix environment, but the steps should w
 
      ```bash
      terraform output
-     ssh -i id_rsa core@$(terraform output | awk '{print $3}')
+     ssh -i id_rsa core@$(terraform output cluster_ip)
      ```
 
 ## TODO
 * Close port 2375 on the swarm security group by creating and inserting certificates when the VMs are created.
 * Split out the root and bastion server for increased robustness (I did not want to sacrifice 1 of the max 4 VMs in the account for a bastion server)
+* Ask for an increase in routers and create a seperate network for the docker registry server
+* Move the registry to a SaaS offering
