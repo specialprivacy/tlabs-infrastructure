@@ -4,7 +4,7 @@ resource "openstack_compute_instance_v2" "root" {
   flavor_name = "${var.instance_flavor}"
   key_pair    = "${openstack_compute_keypair_v2.swarm_keypair.name}"
 
-  security_groups = ["${openstack_networking_secgroup_v2.public_ssh.name}", "${openstack_networking_secgroup_v2.swarm_mode.name}", "${openstack_networking_secgroup_v2.coreos.name}", "${openstack_networking_secgroup_v2.docker_tcp.name}"]
+  security_groups = ["${openstack_networking_secgroup_v2.public_http_server.name}", "${openstack_networking_secgroup_v2.public_ssh.name}", "${openstack_networking_secgroup_v2.swarm_mode.name}", "${openstack_networking_secgroup_v2.coreos.name}", "${openstack_networking_secgroup_v2.docker_tcp.name}"]
   user_data       = "${file("coreos_bootstrap.json")}"
 
   metadata {
@@ -25,7 +25,7 @@ resource "openstack_compute_instance_v2" "master" {
   flavor_name = "${var.instance_flavor}"
   key_pair    = "${openstack_compute_keypair_v2.swarm_keypair.name}"
 
-  security_groups = ["${openstack_networking_secgroup_v2.private_ssh.name}", "${openstack_networking_secgroup_v2.swarm_mode.name}", "${openstack_networking_secgroup_v2.coreos.name}", "${openstack_networking_secgroup_v2.docker_tcp.name}"]
+  security_groups = ["${openstack_networking_secgroup_v2.public_http_server.name}", "${openstack_networking_secgroup_v2.private_ssh.name}", "${openstack_networking_secgroup_v2.swarm_mode.name}", "${openstack_networking_secgroup_v2.coreos.name}", "${openstack_networking_secgroup_v2.docker_tcp.name}"]
   user_data       = "${file("coreos_bootstrap.json")}"
   depends_on      = ["openstack_compute_floatingip_associate_v2.cluster_ip_assoc"]
 
@@ -58,7 +58,7 @@ resource "openstack_compute_instance_v2" "worker" {
   flavor_name = "${var.instance_flavor}"
   key_pair    = "${openstack_compute_keypair_v2.swarm_keypair.name}"
 
-  security_groups = ["${openstack_networking_secgroup_v2.private_ssh.name}", "${openstack_networking_secgroup_v2.swarm_mode.name}", "${openstack_networking_secgroup_v2.coreos.name}", "${openstack_networking_secgroup_v2.docker_tcp.name}"]
+  security_groups = ["${openstack_networking_secgroup_v2.public_http_server.name}", "${openstack_networking_secgroup_v2.private_ssh.name}", "${openstack_networking_secgroup_v2.swarm_mode.name}", "${openstack_networking_secgroup_v2.coreos.name}", "${openstack_networking_secgroup_v2.docker_tcp.name}"]
   user_data       = "${file("coreos_bootstrap.json")}"
   depends_on      = ["openstack_compute_floatingip_associate_v2.cluster_ip_assoc"]
 
