@@ -27,6 +27,9 @@ locksmith:
   reboot_strategy: etcd-lock
 systemd:
   units:
+    - name: docker.service
+      command: start
+      enable: true
     # TODO: replace this with a config that is TLS protected and listens on port 2376
     - name: docker-tcp.socket
       enable: true

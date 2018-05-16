@@ -97,6 +97,15 @@ The examples here will assume a linux / unix environment, but the steps should w
      ssh -i id_rsa core@$(terraform output cluster_ip)
      ```
 
+## FAQ
+
+### Docker does not start automatically at reboot
+Normally the `docker.service` unit in the ignition template should take of this. In order to fix it after deployment: run the following command on each node
+```bash
+sudo systemctl enable docker
+```
+See: https://serverfault.com/questions/743087/docker-daemon-doesnt-start-on-boot-on-coreos
+
 ## TODO
 * Close port 2375 on the swarm security group by creating and inserting certificates when the VMs are created.
 * Split out the root and bastion server for increased robustness (I did not want to sacrifice 1 of the max 4 VMs in the account for a bastion server)
