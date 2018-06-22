@@ -185,3 +185,48 @@ resource "openstack_networking_secgroup_rule_v2" "public_http_server_443" {
   remote_ip_prefix  = "0.0.0.0/0"
   security_group_id = "${openstack_networking_secgroup_v2.public_http_server.id}"
 }
+
+resource "openstack_networking_secgroup_v2" "monitoring_stack" {
+  name        = "monitoring-stack"
+  description = "Security group which opens ports 3000, 9090, 9093 and 9094 to give access to the prometheus monitoring stack"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "monitoring_stack_3000" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 3000
+  port_range_max    = 3000
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.monitoring_stack.id}"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "monitoring_stack_9090" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 9090
+  port_range_max    = 9090
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.monitoring_stack.id}"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "monitoring_stack_9093" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 9093
+  port_range_max    = 9093
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.monitoring_stack.id}"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "monitoring_stack_9094" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 9094
+  port_range_max    = 9094
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.monitoring_stack.id}"
+}

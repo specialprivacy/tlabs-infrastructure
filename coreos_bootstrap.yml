@@ -44,3 +44,7 @@ systemd:
 
         [Install]
         WantedBy=sockets.target
+docker:
+  flags:
+    - --experimental=true
+    - --metrics-addr 0.0.0.0:9323
