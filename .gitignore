@@ -1,6 +1,5 @@
 *-openrc.sh
 openrc.sh
-*.tfstate
 *.backup
 .terraform*
 terraform.tfvars
