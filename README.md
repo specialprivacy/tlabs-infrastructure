@@ -1,3 +1,9 @@
+# WARNING
+
+The default terraform setup creates unused networks, two of which overlapped in IP range. One of them does have a connection to the router, the other doesnt and should be removed. Can be done manually at https://public.tlabs.cloud/project/network_topology/.
+
+TODO fix terraform files to not have overlapping ip ranges
+
 # Special Demo Environment Infrastructure
 This repository contains the code which will provision the infrastructure for demo environment for the SPECIAL platform. The infrastructure is constructed using (terraform)[https://www.terraform.io].
 
