@@ -1,9 +1,3 @@
-# WARNING
-
-The default terraform setup creates unused networks, two of which overlapped in IP range. One of them does have a connection to the router, the other doesnt and should be removed. Can be done manually at https://public.tlabs.cloud/project/network_topology/.
-
-TODO fix terraform files to not have overlapping ip ranges
-
 # Special Demo Environment Infrastructure
 This repository contains the code which will provision the infrastructure for demo environment for the SPECIAL platform. The infrastructure is constructed using (terraform)[https://www.terraform.io].
 
@@ -112,8 +106,3 @@ sudo systemctl enable docker
 ```
 See: https://serverfault.com/questions/743087/docker-daemon-doesnt-start-on-boot-on-coreos
 
-## TODO
-* Close port 2375 on the swarm security group by creating and inserting certificates when the VMs are created.
-* Split out the root and bastion server for increased robustness (I did not want to sacrifice 1 of the max 4 VMs in the account for a bastion server)
-* Ask for an increase in routers and create a seperate network for the docker registry server
-* Move the registry to a SaaS offering
